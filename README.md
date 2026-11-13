@@ -24,11 +24,18 @@ here (its vehicle list is ignored).
 1. **Plan** (PC or iPad): search or click the map to add stops in order.
    Switch to **Add Highlight** and click two points on the route to mark a
    stretch, then pick a type, a label and notes for the salesperson.
-2. **Share**: **Share** gives a QR code and a link; **Save** downloads the
-   route file. **Load** opens a saved file.
+2. **Share** (any device, phones included): **Share** gives a QR code and a
+   link; **Save** downloads the route file. **Load** opens a saved file.
+   **Print route card** (in the Share dialog) prints a one-page sheet for the
+   sales desk: map, numbered stops, highlights with notes, and the route's
+   QR code. It uses the browser's print dialog, so "Save as PDF" works too.
 3. **Drive** (phone or iPad in the car): open the route, tap **Start drive**.
    The app follows GPS, gives turn-by-turn directions, and shows and speaks
    each highlight as it comes up. **▶** simulates the drive without GPS.
+   Untick **Read highlight notes aloud** (above Start drive) to have the app
+   say only the highlight's name; the notes stay on screen for the
+   salesperson to say in their own words. The choice is remembered on that
+   device. The round speaker button in Drive mode still mutes all voice.
 
 On iPhone and iPad a link or scanned QR code opens in Safari, not the
 installed home-screen app. To open a route in the installed app, tap **Open a
@@ -64,6 +71,9 @@ covered in **[DEPLOY.md](DEPLOY.md)**. The workflow in
 - `js/route-codec.js`, `js/share.js`, `js/open-link.js` — share links and QR
 - `js/geo-permission.js`, `js/geo-dialog.js`, `js/enable-location-strip.js`
   — location permission prompts
+- `js/print-card.js` — the printable route card (print styles at the end of
+  `css/style.css`)
+- `js/voice-prefs.js` — the "Read highlight notes aloud" setting
 - `js/sheet.js` — phone bottom-sheet panel; `js/app.js` — wiring
 
 The JavaScript namespace is still `KPR.*` (inherited from the internal tool);

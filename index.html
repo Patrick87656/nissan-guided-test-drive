@@ -122,6 +122,12 @@
         </button>
         <div id="enable-location-help" class="enable-location-help hidden" role="region" aria-live="polite"></div>
       </div>
+      <!-- Drive voice option (js/voice-prefs.js): off = the highlight's name
+           is spoken but its notes stay on screen for the salesperson. -->
+      <label class="speak-notes-row" for="speak-notes">
+        <input id="speak-notes" type="checkbox" checked>
+        <span>Read highlight notes aloud</span>
+      </label>
       <button id="start-drive" class="drive-btn">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 17-7-4-7 4z" fill="currentColor"/></svg>
         Start drive
@@ -298,6 +304,9 @@
       </label>
       <p id="share-long-hint" class="hint hidden"></p>
       <p id="share-status" class="hint" role="status" aria-live="polite"></p>
+      <!-- One-page route sheet (map, stops, highlights, QR) for the sales
+           desk. Filled and printed by js/print-card.js. -->
+      <button id="share-print" class="text-btn share-print-btn" type="button">&#128424; Print route card</button>
       <div class="button-row">
         <button id="share-close" class="secondary-btn" type="button">Close</button>
         <button id="share-send" class="secondary-btn hidden" type="button">Send&hellip;</button>
@@ -340,6 +349,10 @@
     </div>
   </div>
 
+  <!-- Printable route card. Hidden on screen; the print stylesheet shows
+       only this. Filled by js/print-card.js. -->
+  <div id="print-card" aria-hidden="true"></div>
+
   <!-- Local-only, gitignored config holding the Mapbox token as
        window.KPR_MAPBOX_TOKEN. See config.local.js.example. Must load before
        mapbox-gl.js below. -->
@@ -366,6 +379,8 @@
   <script src="js/storage.js"></script>
   <script src="js/share.js"></script>
   <script src="js/open-link.js"></script>
+  <script src="js/voice-prefs.js"></script>
+  <script src="js/print-card.js"></script>
   <script src="js/drive.js"></script>
   <!-- Pre-drive location backstop dialog; shown by Start drive when permission
        isn't granted. Loaded after drive.js (start() calls into it). -->

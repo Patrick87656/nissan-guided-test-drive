@@ -106,6 +106,12 @@ KPR.share = (function () {
     $("share-long-hint").textContent = "";
     $("share-copy").disabled = true;
     $("share-send").classList.add("hidden");
+    // Print waits for the link so the card gets its QR code (print-card.js).
+    if ($("share-print")) $("share-print").disabled = true;
+  }
+
+  function _enablePrint() {
+    if ($("share-print")) $("share-print").disabled = false;
   }
 
   async function _openDialog() {
@@ -130,12 +136,14 @@ KPR.share = (function () {
       $("share-qr-wrap").classList.add("hidden");
       $("share-link").parentElement.classList.add("hidden");
       _setStatus(TOO_BIG_MSG);
+      _enablePrint(); // the card still prints, just without a QR code
       return;
     }
     if (seq !== openSeq) return;
 
     $("share-link").value = link;
     $("share-copy").disabled = false;
+    _enablePrint();
 
     const qr = buildQr(link);
     if (qr) {

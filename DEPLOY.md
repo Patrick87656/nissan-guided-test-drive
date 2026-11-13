@@ -76,10 +76,12 @@ access. Choose **Allow While Using App**.
 
 ## Sharing a route
 
-**Share** makes a link and a QR code for the current route (PC and iPad
-screens; hidden on phone-sized screens). Opening the link loads the route on
-any device with nothing installed. **Save** and **Load** (the JSON file) work
-too.
+**Share** makes a link and a QR code for the current route, on phones,
+iPads and PCs. Opening the link loads the route on any device with nothing
+installed. **Save** and **Load** (the JSON file) work too, and **Print route
+card** in the Share dialog prints a one-page sheet with the route's QR code.
+A printed card carries the same route data as the link: anyone who scans it
+can open the route and read its notes.
 
 - **The route lives inside the link, not on any server.** It is stored after
   the `#`, which browsers never send over the network.

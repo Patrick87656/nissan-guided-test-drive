@@ -647,7 +647,13 @@ KPR.drive = (function () {
       if (!announced.has(sc.id + ":in")) {
         announced.add(sc.id + ":in");
         announced.add(sc.id + ":soon");
-        _say(`${sc.typeLabel}: ${sc.label}. ${sc.notes || ""}`);
+        // Notes are only read aloud when "Read highlight notes aloud" is on
+        // (see voice-prefs.js); otherwise they stay on screen for the
+        // salesperson to say in their own words.
+        const speakNotes = KPR.voicePrefs ? KPR.voicePrefs.getSpeakNotes() : true;
+        _say(KPR.voicePrefs
+          ? KPR.voicePrefs.startAnnouncement(sc.typeLabel, sc.label, sc.notes, speakNotes)
+          : `${sc.typeLabel}: ${sc.label}. ${sc.notes || ""}`);
       }
     } else {
       const d = _fmtDist(upcoming.startDist - along);

@@ -15,7 +15,11 @@ here (its vehicle list is ignored).
 
 ## What it uses
 
-- Mapbox GL JS for the map (Night / Day toggle)
+- Mapbox GL JS for the map (Night / Day toggle, plus **Satellite** when the
+  Mapbox account allows it: on startup the app fetches one tiny satellite
+  tile, and the Satellite button only appears if that succeeds. The current
+  account gets HTTP 429 for satellite imagery, so the button stays hidden
+  until the account is entitled; no code change is needed then.)
 - Mapbox **Directions API** for road-snapped routing in fixed stop order
 - Mapbox **Geocoding API** for place and address search
 

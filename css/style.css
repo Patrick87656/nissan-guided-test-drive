@@ -133,16 +133,19 @@ button, input, select, textarea { font-family: inherit; }
   padding: 16px 16px 12px;
 }
 
+/* Logo lockup: the NISSAN wordmark on top, the app name under it. Stacked so
+   the wordmark can be large without squeezing the route-name box beside it. */
 #app-brand {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   min-width: 0;
 }
 
 #app-logo {
   display: block;
-  height: 14px;
+  height: 22px;
   width: auto;
   flex-shrink: 0;
 }

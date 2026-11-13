@@ -89,6 +89,9 @@
   <script src="harness.js"></script>
   <!-- Mapbox-free; map.js/drive.js stay out of the harness (they need Mapbox). -->
   <script src="../js/geo-permission.js"></script>
+  <!-- map.js only touches mapboxgl inside its functions, so it can load here
+       for the pure probeSatellite() tests; init() is never called. -->
+  <script src="../js/map.js"></script>
   <script src="../js/waypoints.js"></script>
   <script src="../js/scenes.js"></script>
   <script src="../js/vendor/qrcodegen-v1.8.0-es5.js"></script>

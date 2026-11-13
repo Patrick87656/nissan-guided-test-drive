@@ -171,6 +171,39 @@
     assert.equal(window.__pc, undefined);
   });
 
+  // ---- satellite availability probe (js/map.js) --------------------------
+
+  const fakeFetch = (status, calls) => async (url, opts) => {
+    if (calls) calls.push([url, opts]);
+    return { ok: status >= 200 && status < 300, status };
+  };
+
+  test("satellite: offered only when the probe tile loads (200)", async () => {
+    const calls = [];
+    assert.equal(await KPR.map.probeSatellite("pk.test.token", fakeFetch(200, calls)), true);
+    assert.equal(calls.length, 1);
+    assert.ok(calls[0][0].startsWith("https://api.mapbox.com/v4/mapbox.satellite/0/0/0."), calls[0][0]);
+    assert.ok(calls[0][0].includes("access_token=pk.test.token"));
+  });
+
+  test("satellite: refused (429 / 401 / 403 / 404) keeps it hidden", async () => {
+    for (const code of [429, 401, 403, 404, 500]) {
+      assert.equal(await KPR.map.probeSatellite("pk.test.token", fakeFetch(code)), false, String(code));
+    }
+  });
+
+  test("satellite: network error, no token or no fetch keeps it hidden", async () => {
+    assert.equal(await KPR.map.probeSatellite("pk.t", async () => { throw new TypeError("offline"); }), false);
+    assert.equal(await KPR.map.probeSatellite("", fakeFetch(200)), false);
+    assert.equal(await KPR.map.probeSatellite(undefined, fakeFetch(200)), false);
+  });
+
+  test("satellite: the token is URL-encoded into the probe", async () => {
+    const calls = [];
+    await KPR.map.probeSatellite("pk.a&b=c", fakeFetch(200, calls));
+    assert.ok(calls[0][0].endsWith("access_token=pk.a%26b%3Dc"), calls[0][0]);
+  });
+
   test("print: rendering again replaces the previous card", () => {
     P.render(P.buildModel(input()), null);
     const i = input();

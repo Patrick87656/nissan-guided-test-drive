@@ -146,6 +146,9 @@
   <div id="layer-toggle" class="float-card segmented">
     <button id="layer-ocean" class="layer-btn active" data-style="ocean">Night</button>
     <button id="layer-day" class="layer-btn" data-style="day">Day</button>
+    <!-- Hidden until js/map.js confirms the Mapbox account can load
+         satellite imagery (it currently can't: tiles return HTTP 429). -->
+    <button id="layer-satellite" class="layer-btn hidden" data-style="satellite">Satellite</button>
   </div>
 
   <!-- ================================================================

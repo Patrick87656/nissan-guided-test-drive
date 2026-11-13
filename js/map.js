@@ -14,9 +14,14 @@
  * and configurable lighting/color (the look in Mapbox's in-car navigation).
  * Night = dusk light + monochrome theme + blue-teal color overrides; Day =
  * the day light preset. Switching between them only re-applies the Standard
- * basemap config, so the route and scene layers stay put. (A Satellite option
- * that needed a full style swap was removed -- see the STYLES map below -- but
- * the full-swap code path is kept for when it returns.)
+ * basemap config, so the route and scene layers stay put.
+ *
+ * Satellite is a different style (a full style swap; the route and highlight
+ * layers are rebuilt through onStyleReload). Its button is hidden until a
+ * startup check (probeSatellite) confirms this token can actually load
+ * satellite imagery -- the current Mapbox account gets HTTP 429 for those
+ * tiles, and a Satellite button that shows a blank map is worse than none.
+ * Once the account is entitled, the button appears with no code change.
  *
  * Layout note: the map is full-screen and the planner panel floats over its
  * left side. `setPadding` tells Mapbox that strip is covered, so fitBounds,
@@ -67,14 +72,16 @@ KPR.map = (function () {
     // not when this object is first created.
     ocean: { url: STANDARD_URL, get basemapConfig() { return _oceanConfig(); } },
     day: { url: STANDARD_URL, basemapConfig: { lightPreset: "day" } },
-    // A Satellite option (mapbox://styles/mapbox/satellite-streets-v12) used to
-    // live here, but this account's token is not entitled to the satellite
-    // raster tiles API (every tile request returns HTTP 429), so the imagery
-    // never loaded. Removed until the Mapbox account can serve those tiles; the
-    // style-swap machinery below (setStyleKey's full-style-swap branch,
-    // onStyleReload) is kept intact so re-adding it later is a one-line change.
+    // Imagery with street names on top. Only offered when probeSatellite()
+    // succeeds (see the module note); no basemapConfig (not a Standard style).
+    satellite: { url: "mapbox://styles/mapbox/satellite-streets-v12" },
   };
   const DEFAULT_STYLE = "ocean";
+
+  // One tiny (zoom 0, the whole world in a single tile) satellite tile. If the
+  // token can fetch it, satellite imagery works for this account.
+  const SATELLITE_PROBE_URL = "https://api.mapbox.com/v4/mapbox.satellite/0/0/0.jpg90";
+  let satelliteAvailable = false;
 
   let map = null;
   let geolocateControl = null;
@@ -127,8 +134,39 @@ KPR.map = (function () {
     });
 
     _wireStyleSwitcher();
+    _showSatelliteIfAvailable();
 
     return map;
+  }
+
+  /**
+   * Resolves true only if `token` can load satellite imagery (the probe tile
+   * comes back OK). Any refusal (429/401/403), network error or missing
+   * fetch resolves false. `fetchFn` is a seam for tests.
+   */
+  async function probeSatellite(token, fetchFn) {
+    const f = fetchFn || (typeof fetch === "function" ? fetch.bind(window) : null);
+    if (!f || !token) return false;
+    try {
+      const res = await f(`${SATELLITE_PROBE_URL}?access_token=${encodeURIComponent(token)}`, { cache: "no-store" });
+      return !!(res && res.ok);
+    } catch (err) {
+      return false;
+    }
+  }
+
+  /** Show the Satellite button only when the probe succeeds. */
+  function _showSatelliteIfAvailable() {
+    return probeSatellite(window.KPR_MAPBOX_TOKEN).then((ok) => {
+      satelliteAvailable = ok;
+      const btn = document.getElementById("layer-satellite");
+      if (btn) btn.classList.toggle("hidden", !ok);
+      return ok;
+    });
+  }
+
+  function isSatelliteAvailable() {
+    return satelliteAvailable;
   }
 
   /**
@@ -450,6 +488,8 @@ KPR.map = (function () {
     applyPanelPadding,
     setStyleKey,
     getStyleKey,
+    probeSatellite,
+    isSatelliteAvailable,
     stopLocate,
     requestLocation,
   };

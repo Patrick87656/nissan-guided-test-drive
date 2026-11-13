@@ -988,13 +988,9 @@ body.driving .mapboxgl-user-location-accuracy-circle { display: none !important;
   .scene-cards li { padding: 13px 8px 13px 16px; }
   .remove-btn { width: 34px; height: 34px; }
 
+  /* Salespeople often only carry a phone, so phones keep all three buttons
+     (Save | Share | Load), same as PCs and iPads. */
   #panel-footer { padding: 12px 16px calc(12px + var(--safe-bottom)); }
-  /* Routes are planned on a PC and shared from there, so phone-sized screens
-     don't get the Share button: the footer is just Save | Load again. (PCs and
-     iPads, which are wider than this breakpoint, keep all three buttons.
-     Opening a shared link still works on a phone; only sending is hidden.) */
-  #panel-footer #share-route { display: none; }
-  #panel-footer { grid-template-columns: repeat(2, 1fr); }
   .drive-btn { padding: 15px 14px; font-size: 15px; }
   .secondary-btn,
   #panel-footer .secondary-btn { padding: 13px 10px; }
@@ -1482,4 +1478,140 @@ button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
   .dialog-box input[type="text"],
   .dialog-box select,
   .dialog-box textarea { font-size: 16px; }
+}
+
+/* ----------------------------------------------------------------------
+   "Read highlight notes aloud" (js/voice-prefs.js): a full-width footer row
+   just above Start drive.
+   ---------------------------------------------------------------------- */
+.speak-notes-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 2px 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.speak-notes-row input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.speak-notes-row:hover { color: var(--text); }
+
+/* "Print route card" in the Share dialog. */
+.share-print-btn { display: block; margin: 2px 0 12px; padding: 6px 2px; color: var(--accent-hover); font-weight: 600; }
+.share-print-btn:hover:not(:disabled) { color: var(--text); text-decoration: underline; }
+.share-print-btn:disabled { opacity: 0.6; cursor: progress; }
+
+@media (max-width: 700px) {
+  .speak-notes-row { font-size: 13.5px; padding: 4px 2px 2px; }
+  .speak-notes-row input { width: 22px; height: 22px; }
+  .share-print-btn { padding: 10px 2px; }
+}
+
+/* ----------------------------------------------------------------------
+   Printable route card (js/print-card.js). Never shown on screen; when
+   printing, it is the ONLY thing shown. Black-on-white, Nissan red accents.
+   ---------------------------------------------------------------------- */
+#print-card { display: none; }
+
+@media print {
+  @page { size: letter portrait; margin: 12mm; }
+
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #111 !important;
+  }
+  body > * { display: none !important; }
+  body > #print-card { display: block !important; }
+
+  #print-card {
+    font-family: var(--font);
+    font-size: 10.5pt;
+    line-height: 1.35;
+    color: #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .pc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 6pt;
+    border-bottom: 2pt solid #c3002f;
+  }
+  .pc-logo { height: 16pt; width: auto; display: block; }
+  .pc-app { font-size: 10pt; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #555; }
+  .pc-name { margin: 10pt 0 4pt; font-size: 18pt; font-weight: 700; color: #111; overflow-wrap: anywhere; }
+  .pc-stats { display: flex; gap: 18pt; margin: 0 0 8pt; padding: 0; list-style: none; color: #444; }
+  .pc-stats strong { color: #111; font-size: 12pt; }
+  .pc-map {
+    display: block;
+    width: 100%;
+    max-height: 95mm;
+    object-fit: contain;
+    margin: 0 0 10pt;
+    border: 0.75pt solid #ccc;
+    border-radius: 4pt;
+  }
+  .pc-cols { display: flex; gap: 14pt; align-items: flex-start; }
+  .pc-col { flex: 1; min-width: 0; }
+  .pc-col:last-child { flex: 1.35; }
+  .pc-col h2 {
+    margin: 0 0 6pt;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #555;
+  }
+  .pc-stops, .pc-highlights { margin: 0; padding: 0; list-style: none; }
+  .pc-stops li { display: flex; gap: 7pt; align-items: flex-start; margin-bottom: 5pt; break-inside: avoid; }
+  .pc-num {
+    flex-shrink: 0;
+    width: 15pt;
+    height: 15pt;
+    border-radius: 50%;
+    background: #c3002f;
+    color: #fff;
+    font-size: 8pt;
+    font-weight: 700;
+    line-height: 15pt;
+    text-align: center;
+  }
+  .pc-stop-name { font-weight: 600; overflow-wrap: anywhere; }
+  .pc-stop-detail { font-size: 8.5pt; color: #666; overflow-wrap: anywhere; }
+  .pc-highlights li {
+    margin-bottom: 7pt;
+    padding: 2pt 0 2pt 8pt;
+    border-left: 3pt solid #c3002f;
+    break-inside: avoid;
+  }
+  .pc-hl-type { font-size: 8pt; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+  .pc-hl-label { font-weight: 700; overflow-wrap: anywhere; }
+  .pc-hl-notes { color: #333; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .pc-empty { color: #666; margin: 0; }
+  .pc-foot {
+    display: flex;
+    align-items: center;
+    gap: 12pt;
+    margin-top: 10pt;
+    padding-top: 8pt;
+    border-top: 0.75pt solid #ccc;
+    break-inside: avoid;
+  }
+  /* Route links make dense codes; 42mm keeps them scannable off paper. */
+  .pc-qr { width: 42mm; height: 42mm; image-rendering: pixelated; flex-shrink: 0; }
+  .pc-qr-text { margin: 0; color: #333; }
+  .pc-qr-text strong { display: block; font-size: 11pt; color: #111; margin-bottom: 2pt; }
+  .pc-safety { margin: 8pt 0 0; font-size: 8pt; color: #666; }
 }

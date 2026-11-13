@@ -254,6 +254,8 @@ KPR.app = (function () {
     KPR.geoDialog.init();
     KPR.drive.init();
     KPR.enableLocationStrip.init();
+    KPR.voicePrefs.init();
+    KPR.printCard.init();
     KPR.sheet.init();
 
     _wireModeButtons();

@@ -355,7 +355,9 @@ KPR.map = (function () {
   const BASEMAP_DEFAULTS = {
     lightPreset: "day",
     theme: "default",
-    "theme-data": undefined, // drop the ocean LUT when leaving Ocean for Day
+    // Drop the Night LUT when going to Day. Must be null: Mapbox rejects
+    // undefined ("'undefined' value invalid. Use null instead.").
+    "theme-data": null,
   };
 
   /** Switch to one of the STYLES keys. Ocean <-> Day only re-applies the
